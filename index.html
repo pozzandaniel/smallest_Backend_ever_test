@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="./mini_backend.js"></script>
+</head>
+<body onload="init()">
+    <input id="newUser" type="text" placeholder="name hinzufügen">
+    <button onclick="handleAddUser()">Speichern</button>
+    <ul id="userList"></ul>
+    
+    <script>
+       let users = [];
+    
+        // wir geben ein URL in die Funktion setURL. Dieses URL wird durch die Funktion downloadFromServer esrtmal aufgerufen und in ein Text konvertiert.
+        //Danach wird dieser Text in ein echtes Object umgewandelt.
+        async function init() {
+            setURL('http://daniel-pozzan.developerakademie.net/smallest_backend_ever-master');
+            await downloadFromServer();
+    
+            users = JSON.parse(backend.getItem('users')) || [];
+            renderList();
+        }
+    
+        function renderList(){
+            let userList = document.getElementById('userList');
+            userList.innerHTML = '';
+            for(let i = 0; i < users.length; i++){
+                const user = users[i];
+                userList.innerHTML += `<li>${user}<span style="cursor:pointer" onclick="deleteUser(${i})"> X</span></li>`;
+            }
+        }
+    
+        async function handleAddUser() {
+            addNewUser();
+            backend.setItem('users', JSON.stringify(users));
+            renderList();
+        }
+    
+        function addNewUser(){
+            let newUser = document.getElementById('newUser');
+            users.push(newUser.value);
+            newUser.value = '';
+        }
+    
+        async function deleteUser(userIndex) {
+            users.splice(userIndex, 1);
+            backend.setItem('users', JSON.stringify(users));
+            renderList();
+        }
+    
+    </script>
+</body>
+</html>
